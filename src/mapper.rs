@@ -3,6 +3,6 @@ use crate::{
     kind::{ErrorDomain, ErrorKind, ErrorReason},
 };
 
-pub trait ErrorMapper {
-    fn map(&self) -> AppError;
+pub fn map_error(domain: ErrorDomain, reason: ErrorReason) -> AppError {
+    AppError::from(ErrorKind::new(domain, reason))
 }
