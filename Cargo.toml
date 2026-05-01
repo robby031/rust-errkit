@@ -2,6 +2,12 @@
 name = "rust-errkit"
 version = "0.1.0"
 edition = "2024"
+description = "Idiomatic Rust error handling kit"
+license = "MIT"
+repository = "https://github.com/robby031/rust-errkit"
+readme = "README.md"
+keywords = ["error", "result", "rust", "error-handling", "kit"]
+categories = ["rust-patterns", "error-handling"]
 
 [dependencies]
 serde = { version = "1.0.228", features = ["derive"] }
