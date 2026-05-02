@@ -4,6 +4,6 @@ use rust_errkit::{
 };
 
 fn main() {
-    let err = AppError::from(ErrorKind::network(ErrorReason::Timeout));
-    println!("MESSAGE: {}", err.kind.message());
+    let err: AppError = ErrorKind::network(ErrorReason::Timeout).into();
+    println!("MESSAGE: {}", err);
 }

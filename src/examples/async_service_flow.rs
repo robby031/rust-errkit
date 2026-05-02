@@ -7,25 +7,20 @@ async fn fetch_remote() -> Result<String, &'static str> {
     Err("timeout")
 }
 
-fn map_remote_error(_e: &'static str) -> AppError {
-    AppError::from(ErrorKind::network(ErrorReason::Timeout))
-}
-
 async fn service_layer() -> AppResult<String> {
-    let data = fetch_remote().await.map_err(map_remote_error)?;
+    let data = fetch_remote()
+        .await
+        .map_err(|_| ErrorKind::network(ErrorReason::Timeout).into())?;
     Ok(data)
 }
 
 #[tokio::main]
 async fn main() {
-    match service_layer().await {
-        Ok(v) => println!("OK: {}", v),
-        Err(e) => {
-            println!("MESSAGE: {}", e.kind.message());
+    if let Err(e) = service_layer().await {
+        println!("ERROR REPORT:\n{}", e);
 
-            if let Some(ctx) = e.context {
-                println!("SOURCE: {}", ctx.source);
-            }
+        if e.kind.reason == ErrorReason::Timeout {
+            println!("Action: Retry connection...");
         }
     }
 }

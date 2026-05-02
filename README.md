@@ -16,7 +16,7 @@ Tambahkan ke `Cargo.toml` Anda:
 
 ```toml
 [dependencies]
-rust-errkit = "0.1.0"
+rust-errkit = "0.1.1"
 ```
 
 ## Penggunaan Dasar
@@ -26,8 +26,9 @@ rust-errkit = "0.1.0"
 ```rust
 use rust_errkit::{AppError, kind::{ErrorKind, ErrorReason}};
 
-let err = AppError::from(ErrorKind::network(ErrorReason::Timeout));
-println!("MESSAGE: {}", err.kind.message());
+let err: AppError = ErrorKind::network(ErrorReason::Timeout).into();
+
+println!("{}", err);
 ```
 
 ### Menambah Context pada Error
@@ -38,7 +39,9 @@ use rust_errkit::{AppError, kind::{ErrorKind, ErrorReason}};
 let err = AppError::from(ErrorKind::db(ErrorReason::ConnectionFailed))
     .with_context("sqlx", Some("connection refused".to_string()));
 
-if let Some(ctx) = err.context {
+println!("{}", err);
+
+if let Some(ctx) = &err.context {
     println!("SOURCE: {}", ctx.source);
     println!("DETAILS: {:?}", ctx.details);
 }
@@ -50,14 +53,15 @@ if let Some(ctx) = err.context {
 use rust_errkit::{AppError, kind::{ErrorKind, ErrorReason}};
 
 fn map_db_error(e: &str) -> AppError {
-    AppError::from(ErrorKind::db(ErrorReason::Unexpected)).with_context("sqlx", Some(e.to_string()))
+    AppError::from(ErrorKind::db(ErrorReason::Unexpected))
+        .with_context("sqlx", Some(e.to_string()))
 }
 ```
 
 ### Menggunakan AppResult dan ResultExt
 
 ```rust
-use rust_errkit::{AppResult, ResultExt, AppError, kind::ErrorKind};
+use rust_errkit::{AppResult, AppError, kind::{ErrorKind, ErrorReason}};
 
 fn might_fail(success: bool) -> Result<String, &'static str> {
     if success {
@@ -70,7 +74,7 @@ fn might_fail(success: bool) -> Result<String, &'static str> {
 fn main() -> AppResult<()> {
     let value = might_fail(false)
         .map_err(|e| {
-            AppError::from(ErrorKind::unknown())
+            AppError::from(ErrorKind::core(ErrorReason::Unexpected))
                 .with_context("might_fail", Some(e.to_string()))
         })?;
 
@@ -88,12 +92,9 @@ async fn fetch_remote() -> Result<String, &'static str> {
     Err("timeout")
 }
 
-fn map_remote_error(_e: &'static str) -> AppError {
-    AppError::from(ErrorKind::network(ErrorReason::Timeout))
-}
-
 async fn service_layer() -> AppResult<String> {
-    let data = fetch_remote().await.map_err(map_remote_error)?;
+    let data = fetch_remote().await
+        .map_err(|_| ErrorKind::network(ErrorReason::Timeout).into())?;
     Ok(data)
 }
 ```

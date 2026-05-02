@@ -1,16 +1,20 @@
-use rust_errkit::{AppError, AppResult, ResultExt, kind::ErrorKind};
+use rust_errkit::{
+    AppError, AppResult,
+    kind::{ErrorKind, ErrorReason},
+};
 
 fn might_fail(success: bool) -> Result<String, &'static str> {
     if success {
-        Ok("OK".to_string())
+        Ok("Success!".to_string())
     } else {
-        Err("something went wrong")
+        Err("Internal logic leak")
     }
 }
 
 fn main() -> AppResult<()> {
     let value = might_fail(false).map_err(|e| {
-        AppError::from(ErrorKind::unknown()).with_context("might_fail", Some(e.to_string()))
+        AppError::from(ErrorKind::core(ErrorReason::Unexpected))
+            .with_context("logic_engine", Some(e.to_string()))
     })?;
 
     println!("{}", value);
