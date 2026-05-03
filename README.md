@@ -1,5 +1,11 @@
 # rust-errkit
 
+[![Crates.io](https://img.shields.io/crates/v/rust-errkit?style=flat-square&color=orange&logo=rust)](https://crates.io/crates/rust-errkit)
+[![Documentation](https://img.shields.io/docsrs/rust-errkit?style=flat-square&logo=docs.rs)](https://docs.rs/rust-errkit)
+[![License](https://img.shields.io/crates/l/rust-errkit?style=flat-square&color=blue)](https://crates.io/crates/rust-errkit)
+[![Downloads](https://img.shields.io/crates/d/rust-errkit?style=flat-square&color=darkgreen)](https://crates.io/crates/rust-errkit)
+[![Support me on Ko-fi](https://img.shields.io/badge/Support%20me-Ko--fi-F16061?style=flat-square&logo=ko-fi&logoColor=white)](https://ko-fi.com/robby031)
+
 **rust-errkit** adalah library error handling idiomatik untuk Rust yang memudahkan pembuatan, mapping, dan penanganan error secara terstruktur dan konsisten.
 
 ## Fitur Utama
